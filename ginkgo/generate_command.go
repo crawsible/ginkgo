@@ -158,10 +158,7 @@ func getPackageImportPath() string {
 	sep := string(filepath.Separator)
 	split := sep + "src" + sep
 	if !strings.Contains(workingDir, split) {
-		workingDir, err = filepath.EvalSymlinks(workingDir)
-		if err != nil {
-			panic(err.Error())
-		}
+		workingDir = unravelSymlinkedGopath(workingDir, sep)
 	}
 
 	paths := strings.Split(workingDir, split)
@@ -170,4 +167,7 @@ func getPackageImportPath() string {
 		return "UNKNOWN_PACKAGE_PATH"
 	}
 	return filepath.ToSlash(paths[len(paths)-1])
+}
+
+func unravelSymlinkedGopath(path string, sep string) string {
 }
