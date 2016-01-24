@@ -154,8 +154,17 @@ func getPackageImportPath() string {
 	if err != nil {
 		panic(err.Error())
 	}
+
 	sep := string(filepath.Separator)
-	paths := strings.Split(workingDir, sep+"src"+sep)
+	split := sep + "src" + sep
+	if !strings.Contains(workingDir, split) {
+		workingDir, err = filepath.EvalSymlinks(workingDir)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+
+	paths := strings.Split(workingDir, split)
 	if len(paths) == 1 {
 		fmt.Printf("\nCouldn't identify package import path.\n\n\tginkgo generate\n\nMust be run within a package directory under $GOPATH/src/...\nYou're going to have to change UNKNOWN_PACKAGE_PATH in the generated file...\n\n")
 		return "UNKNOWN_PACKAGE_PATH"
